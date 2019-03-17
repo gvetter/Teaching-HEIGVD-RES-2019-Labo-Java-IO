@@ -91,7 +91,7 @@ public class Application implements IApplication {
        */
       LOG.info("Received a new joke with " + quote.getTags().size() + " tags.");
 
-      storeQuote(quote, "quote-" + quote.getTags().size() + ".utf8");
+      storeQuote(quote, "quote-" + i + ".utf8");
       for (String tag : quote.getTags()) {
         LOG.info("> " + tag);
       }
@@ -125,25 +125,16 @@ public class Application implements IApplication {
    */
   void storeQuote(Quote quote, String filename) throws IOException {
     try {
-      String path = "/quotes";
+      String path = WORKSPACE_DIRECTORY;
       List<String> tags = quote.getTags();
       for (int i = 0; i < tags.size(); i++) {
-        path = path + "/" + tags.get(i);
+        path = path + File.separator + tags.get(i);
       }
-      path = path + "/" + filename;
 
-      byte[] text = quote.getQuote().getBytes();
-
-      File outputFile = new File(path);
-      if (!outputFile.getParentFile().exists())
-        outputFile.getParentFile().mkdirs();
-      if (!outputFile.exists())
-        outputFile.createNewFile();
-      FileOutputStream fos = new FileOutputStream(outputFile);
-
-      fos.write(text);
-      fos.flush();
-      fos.close();
+      new File(path).mkdirs();
+      OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(path + File.separator + filename), "UTF-8");
+      out.write(quote.getQuote());
+      out.close();
     }catch (IOException e){
       e.printStackTrace();
     }
@@ -164,9 +155,10 @@ public class Application implements IApplication {
          * of the the IFileVisitor interface inline. You just have to add the body of the visit method, which should
          * be pretty easy (we want to write the filename, including the path, to the writer passed in argument).
          */
-        String path = file.getAbsolutePath();
+        String path = file.getPath();
         try{
           writer.write(path);
+          writer.write("\n");
         } catch (IOException e){
           e.printStackTrace();
         }

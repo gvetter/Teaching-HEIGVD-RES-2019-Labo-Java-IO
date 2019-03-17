@@ -25,13 +25,11 @@ public class DFSFileExplorer implements IFileExplorer {
         if (listFiles[i].isFile()) {
           visitor.visit(listFiles[i]);
         }
-      }
-
-      for (int i = 0; i < listFiles.length; i++) {
         if (listFiles[i].isDirectory()) {
           explore(listFiles[i], visitor);
         }
       }
+
     }
   }
 
