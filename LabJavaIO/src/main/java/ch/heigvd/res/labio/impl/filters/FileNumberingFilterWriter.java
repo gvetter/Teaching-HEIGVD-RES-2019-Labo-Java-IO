@@ -22,20 +22,54 @@ public class FileNumberingFilterWriter extends FilterWriter {
   public FileNumberingFilterWriter(Writer out) {
     super(out);
   }
+  private int count = 0;
+  private boolean isRN = false;
 
   @Override
   public void write(String str, int off, int len) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    write(str.toCharArray(), off, len);
   }
 
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    for(int i = off; i < off + len; i++) {
+      write(cbuf[i]);
+    }
   }
 
   @Override
   public void write(int c) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    if(count == 0){
+      count++;
+      this.out.write(count + "\t");
+    }
+    if(isRN){
+      if(c != '\n') {
+        count++;
+        isRN = false;
+        this.out.write("\r");
+        this.out.write(count + "\t");
+        this.out.write(c);
+      } else {
+        this.out.write("\r" + "\n");
+        count++;
+        isRN = false;
+        this.out.write(count + "\t");
+      }
+    } else {
+      if (c == '\r') {
+        isRN = true;
+      } else {
+        if (c == '\n') {
+          count++;
+          this.out.write(c);
+          this.out.write(count + "\t");
+        } else {
+          this.out.write(c);
+        }
+      }
+    }
   }
+
 
 }
